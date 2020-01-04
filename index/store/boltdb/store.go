@@ -27,6 +27,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/blevesearch/bleve/index/store"
 	"github.com/blevesearch/bleve/registry"
@@ -78,6 +79,10 @@ func New(mo store.MergeOperator, config map[string]interface{}) (store.KVStore, 
 		bo.InitialMmapSize = initialMmapSize
 	} else if initialMmapSize, ok := config["initialMmapSize"].(float64); ok {
 		bo.InitialMmapSize = int(initialMmapSize)
+	}
+
+	if boltTimeout, ok := config["boltTimeout"].(int); ok {
+		bo.Timeout = time.Second * time.Duration(boltTimeout)
 	}
 
 	db, err := bolt.Open(path, 0600, bo)
